@@ -1,0 +1,17 @@
+import React , {useState, useEffect} from 'react'
+
+const ButtonsCall = () =>
+{
+   
+
+    return (
+        <div className=''>
+            <div className=''>
+                <button className='button' id=''>CALL</button>
+                
+            </div>
+        </div>
+    )
+}
+
+export default ButtonsCall
