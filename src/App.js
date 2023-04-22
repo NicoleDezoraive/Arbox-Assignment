@@ -1,5 +1,5 @@
 import "./style.css"
-import Table from "./components/Table";
+import Building from "./components/Building";
 import React from 'react';
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
     <div className="App">
       <h1>Elevator Execrise</h1>
       <div className='container'>
-      <Table></Table>
+        <Building></Building>
       </div>
     </div>
   );

@@ -1,15 +1,15 @@
-import React from 'react'
+import React , { useState } from 'react'
 
-function ButtonsCall() 
+function ButtonsCall({floorNumber, callElevator, isWaiting}) 
 {
-   
+
+    const handleClick = () => {
+        callElevator(floorNumber)
+      };
 
     return (
-        <div className=''>
-          
-            <button className='button' id=''>CALL</button>
-       
-    
+        <div className=''> 
+            <button className={`button ${isWaiting ? "waiting" : ""}`} onClick={handleClick} id=''>{isWaiting ? "Waiting" : "Call"}</button>
         </div>
     )
 }

@@ -38,6 +38,10 @@ h1{
   box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
 }
 
+.button.waiting {
+    background-color: #ED2939;
+  }
+
 th, td {
     padding: 10px;
     text-align: center;
