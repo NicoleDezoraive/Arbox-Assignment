@@ -1,6 +1,6 @@
 import React , { useState } from 'react'
 
-function ButtonsCall({floorNumber, callElevator, isWaiting}) 
+function ButtonsCall({floorNumber, callElevator, status}) 
 {
 
     const handleClick = () => {
@@ -9,7 +9,7 @@ function ButtonsCall({floorNumber, callElevator, isWaiting})
 
     return (
         <div className=''> 
-            <button className={`button ${isWaiting ? "waiting" : ""}`} onClick={handleClick} id=''>{isWaiting ? "Waiting" : "Call"}</button>
+            <button className={`button ${status}`} onClick={handleClick} id=''>{status}</button>
         </div>
     )
 }
