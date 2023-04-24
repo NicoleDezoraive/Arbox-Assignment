@@ -4,7 +4,7 @@ import Elevator from "../elevator/Elevator"
 
 function Floor({name, numberOfElevators, status, floorNumber, time, elevators, callElevator, elevatorPositions}) 
 {
-    console.log(status)
+    // console.log(status)
     return (
         <tr key={name}>
             

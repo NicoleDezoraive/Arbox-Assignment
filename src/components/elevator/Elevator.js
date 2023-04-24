@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {ReactComponent as IconElevator} from "../../images/icons8-elevator.svg"
+import ElevatorArrivedSound from '../../sounds/elevator_arrival_bell.mp3';
 
 function Elevator({status, floorNumber, time}) 
 {
@@ -15,13 +16,9 @@ function Elevator({status, floorNumber, time})
         color = 'green';
     }
 
-    // const style = {
-    //     fill: color,
-    //     transition: `transform ${animationDuration}s linear`,
-    //     animation-duration: `${animationDuration}ms`,
-    //     animation-timing-function: linear;
-    //     animation-iteration-count: infinite;
-    // };
+    // const audio = new Audio(ElevatorArrivedSound);
+    // audio.play();
+
     
     useEffect(() => {
         const timePerFloor =1000 * 60 //1000 * time; // time in seconds
@@ -35,6 +32,7 @@ function Elevator({status, floorNumber, time})
     return (
         <div>
             <IconElevator className="icon-elevator" style={{ fill: color }}/>
+            {status === 'Arrived' && <audio src={ElevatorArrivedSound} autoPlay />}
         </div>
     
     )

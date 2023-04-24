@@ -20,27 +20,58 @@ const Building = () => {
     id: index
   })));
 
+  function sortCalls(calls) {
+    return calls.sort((a, b) => a - b);
+  }
+
+  function getClosestElevator(calls, elevators) {
+    const availableElevators = elevators.filter(elevator => elevator.status === "Available");
+  
+    if (availableElevators.length === 0) {
+      return null; // No available elevators
+    }
+  
+    const sortedElevators = availableElevators.sort((a, b) => {
+      const distanceToCallA = Math.abs(a.floorNumber - calls[0]);
+      const distanceToCallB = Math.abs(b.floorNumber - calls[0]);
+      return distanceToCallA - distanceToCallB;
+    });
+  
+    return sortedElevators[0];
+  }
+
   useEffect(() => {
     if (calls.length === 0) {
       return;
     }
-    const availableElevator = elevators.filter(elevator => elevator.status === "Available")[0];
-    if (!availableElevator) {
+    let firstCall;
+    const sortedElevator = getClosestElevator(calls, elevators);
+    if (!sortedElevator) {
+      // wait for 5 seconds and try again
+      // setTimeout(() => {
+      //   setCalls(sortCalls(calls));
+      // }, 5000);
       return;
     }
     // handle elevator algorithm
-    const firstCall = calls[0];
-    console.log(firstCall);
+    
+    else{
+      firstCall = calls[0];
+      setCalls(prevArray => prevArray.slice(1));
+      console.log(firstCall);
+    }
+    
 
     setElevators((prevElevator) => prevElevator.map(elevator => {
-      if (elevator.id === availableElevator.id) {
+      if (elevator.id === sortedElevator.id) {
         elevator.status = "Busy";
-        setCalls(prevArray => prevArray.slice(1));
+        // setCalls(prevArray => prevArray.slice(1));
         const timeout = 0.5 * 60 * 1000 / (Math.abs(elevator.floorNumber - firstCall) + 1); // calculate the timeout value
         let newFloorNumber = elevator.floorNumber;
         console.log("newFloorNumber: ",newFloorNumber);
         let i = elevator.floorNumber;
         const timer = setInterval(() => {
+          console.log("newFloorNumber: ",newFloorNumber);
           if(i < firstCall){
             i = i + 1
           }
@@ -51,7 +82,7 @@ const Building = () => {
           if (newFloorNumber === firstCall) {
             clearInterval(timer);
             setElevators(prevElevator => prevElevator.map(elevator => {
-              if (elevator.id === availableElevator.id) {
+              if (elevator.id === sortedElevator.id) {
                 return {
                   ...elevator,
                   status: "Arrived",
@@ -75,7 +106,7 @@ const Building = () => {
           }
           newFloorNumber = i;
           setElevators(prevElevator => prevElevator.map(elevator => {
-            if (elevator.id === availableElevator.id) {
+            if (elevator.id === sortedElevator.id) {
               return { ...elevator, floorNumber: newFloorNumber };
             }
             return elevator;
@@ -89,7 +120,7 @@ const Building = () => {
 
 
     // go over all elevator, take all the availble elevators and coose the closest one
-  }, [calls])
+  }, [calls, elevators, floors])
 
   useEffect(() => {
     elevators.forEach(elevator => {
@@ -128,9 +159,9 @@ const Building = () => {
 
    const hasElevators = (floorNumber) =>{
     const elevatorsForFloor = elevators.map((elevator)=>{
-      // console.log("number: ",floorNumber, "ele:", elevator?.floorNumber)
+      console.log("number: ",floorNumber, "ele:", elevator?.floorNumber)
       if(elevator?.floorNumber === floorNumber ){
-        // console.log("elevaiter ", elevator)
+        console.log("elevaiter ", elevator)
         return elevator;
       }
       else{
@@ -141,6 +172,7 @@ const Building = () => {
     });
     
     const updatedElevators = elevatorsForFloor.map((elevator) => {
+      console.log({elevator});
           if(elevator.status === "Available"){
             return { 
               ...elevator,
@@ -153,7 +185,8 @@ const Building = () => {
             }       
           }
           
-        });;
+          
+    });;
         console.log({updatedElevators, elevators})
     return updatedElevators;
   };
@@ -170,7 +203,7 @@ const Building = () => {
     }))
 
     setCalls(prevCalls => {
-      console.log({prevCalls})
+      // console.log({prevCalls})
       return [...prevCalls, floorNumber]})
   }
 
