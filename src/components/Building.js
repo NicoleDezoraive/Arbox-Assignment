@@ -1,12 +1,19 @@
-import React , { useState, useEffect } from 'react'
-import Floor from "./floor/Floor"
+import React , { useState, useEffect } from 'react';
+import Floor from "./floor/Floor";
+import { useLocation } from 'react-router-dom';
+// import DayJS from 'react-dayjs';
 
 
 const Building = () => {
-  const floorsNames = ["Ground Floor", "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th"];
-  const numberOfElevators = 5;
+  const location = useLocation();
+  // const floorsNames = ["Ground Floor", "1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th"];
+  const floorsNames = getFloorNames(location.state.numFloors);
+  const numberOfElevators = parseInt(location.state.numElevators);
 
-  const [calls, setCalls] = useState([]); //shold be empty
+  const [calls, setCalls] = useState([]);
+  const [timeForFloorSec, setTimeForFloor] = useState(7); 
+  
+  //floors
   const [floors, setFloors] = useState([...floorsNames.map((floorName, index) => ({
     status: "Call",
     name: floorName,
@@ -14,31 +21,69 @@ const Building = () => {
     time: 0
   }))]);
 
+  //elevators
   const [elevators, setElevators] = useState([...Array(numberOfElevators)].map((_, index) => ({
     status: "Available",
     floorNumber: 0,
-    id: index
+    destination: 0,
+    id: index,
+    eta: 0,
+    timeTookArrive: 0
   })));
 
-  function sortCalls(calls) {
-    return calls.sort((a, b) => a - b);
+  function getFloorNames(numFloors) {
+    const floorNames = ["Ground Floor"];
+    const suffix = ["th", "st", "nd", "rd"];
+    for (let i = 1; i < numFloors; i++) {
+      if (i >= 11 && i <= 13) {
+        floorNames.push(`${i}${suffix[0]}`);
+      } else {
+        floorNames.push(`${i}${suffix[i % 10 < 4 ? i % 10 : 0]}`);
+      }
+    }
+    return floorNames;
   }
 
+  // elevator algorithm
   function getClosestElevator(calls, elevators) {
     const availableElevators = elevators.filter(elevator => elevator.status === "Available");
-  
     if (availableElevators.length === 0) {
       return null; // No available elevators
     }
-  
     const sortedElevators = availableElevators.sort((a, b) => {
       const distanceToCallA = Math.abs(a.floorNumber - calls[0]);
       const distanceToCallB = Math.abs(b.floorNumber - calls[0]);
       return distanceToCallA - distanceToCallB;
     });
-  
     return sortedElevators[0];
   }
+
+  function calculateTimeTakesReachFloor(currentFloor, targetFloor, speed) {
+    const distance = Math.abs(targetFloor - currentFloor);
+    const timeInSeconds = (distance / speed) * timeForFloorSec;
+    return timeInSeconds;
+  }
+
+    //Countdown - Time left for the elevator to arrive
+  useEffect(() => {
+    const timers = elevators
+      .filter(elevator => elevator.status === 'Busy')
+      .map(elevator => {
+        const timer = setInterval(() => {
+          setElevators(prevElevators => prevElevators.map(prevElevator => {
+            if (prevElevator.id === elevator.id) {
+              return { ...prevElevator, eta: prevElevator.eta - 1 };
+            }
+            return prevElevator;
+          }));
+        }, 1000);
+        return timer;
+      });
+    return () => {
+      timers.forEach(timer => clearInterval(timer));
+    };
+  }, [elevators]);
+
 
   useEffect(() => {
     if (calls.length === 0) {
@@ -47,50 +92,48 @@ const Building = () => {
     let firstCall;
     const sortedElevator = getClosestElevator(calls, elevators);
     if (!sortedElevator) {
-      // wait for 5 seconds and try again
-      // setTimeout(() => {
-      //   setCalls(sortCalls(calls));
-      // }, 5000);
       return;
     }
-    // handle elevator algorithm
-    
     else{
       firstCall = calls[0];
       setCalls(prevArray => prevArray.slice(1));
       console.log(firstCall);
     }
     
-
     setElevators((prevElevator) => prevElevator.map(elevator => {
       if (elevator.id === sortedElevator.id) {
         elevator.status = "Busy";
-        // setCalls(prevArray => prevArray.slice(1));
-        const timeout = 0.5 * 60 * 1000 / (Math.abs(elevator.floorNumber - firstCall) + 1); // calculate the timeout value
+        elevator.destination = firstCall;
+        elevator.eta = calculateTimeTakesReachFloor(elevator.floorNumber, firstCall, 1); // calculate the timeout value
         let newFloorNumber = elevator.floorNumber;
         console.log("newFloorNumber: ",newFloorNumber);
-        let i = elevator.floorNumber;
+        const startTime = new Date().getTime();
         const timer = setInterval(() => {
-          console.log("newFloorNumber: ",newFloorNumber);
-          if(i < firstCall){
-            i = i + 1
+          
+          if(newFloorNumber < firstCall){
+            newFloorNumber = newFloorNumber + 1
           }
-          else if(i > firstCall){
-            i = i - 1
+          else if(newFloorNumber > firstCall){
+            newFloorNumber = newFloorNumber - 1
           }
-          console.log("newFloorNumber: ",newFloorNumber, "firstCall:", firstCall ,"i:", i);
+          console.log("newFloorNumber: ",newFloorNumber, "firstCall:", firstCall );
           if (newFloorNumber === firstCall) {
             clearInterval(timer);
-            setElevators(prevElevator => prevElevator.map(elevator => {
+            const endTime = new Date().getTime();
+            const timeTookArrive = endTime - startTime;
+            
+            setElevators(prevElevator => prevElevator.map(elevator => { 
               if (elevator.id === sortedElevator.id) {
                 return {
                   ...elevator,
                   status: "Arrived",
                   floorNumber: firstCall,
+                  timeTookArrive: timeTookArrive/1000
                 };
               }
               return elevator;
             }));
+            
 
             setFloors(prevFloor => prevFloor.map(floor => {
               if (floor.index === firstCall) {
@@ -104,20 +147,22 @@ const Building = () => {
             // console.log("elevator.floorNumber: ", elevator.floorNumber,"firstCall: ",firstCall )
            
           }
-          newFloorNumber = i;
+          
           setElevators(prevElevator => prevElevator.map(elevator => {
             if (elevator.id === sortedElevator.id) {
-              return { ...elevator, floorNumber: newFloorNumber };
+              return { ...elevator, floorNumber: newFloorNumber};
             }
             return elevator;
+            
           }));
           
-        }, timeout);
-        return { ...elevator, timer };
+        }, timeForFloorSec*1000);
+        return { ...elevator };
       }
+      
       return elevator;
+      
     }))
-
 
     // go over all elevator, take all the availble elevators and coose the closest one
   }, [calls, elevators, floors])
@@ -134,6 +179,7 @@ const Building = () => {
           }));
         }, 2000);
       }
+      
     });
   }, [elevators]);
 
@@ -157,41 +203,11 @@ const Building = () => {
 
   console.log({floors, elevators, calls})
 
-   const hasElevators = (floorNumber) =>{
-    const elevatorsForFloor = elevators.map((elevator)=>{
-      console.log("number: ",floorNumber, "ele:", elevator?.floorNumber)
-      if(elevator?.floorNumber === floorNumber ){
-        console.log("elevaiter ", elevator)
-        return elevator;
-      }
-      else{
-        return{
-         
-        }  
-      }
-    });
-    
-    const updatedElevators = elevatorsForFloor.map((elevator) => {
-      console.log({elevator});
-          if(elevator.status === "Available"){
-            return { 
-              ...elevator,
-              status: 'Available'
-            };
-          }
-          else{
-            return{
-              ...elevator,
-            }       
-          }
-          
-          
-    });;
-        console.log({updatedElevators, elevators})
-    return updatedElevators;
-  };
 
   const callElevator = (floorNumber) => {
+    // if(!interval){
+    //   setInterval(1000);
+    // }
     setFloors((prevFloor) => prevFloor.map(floor => {
       if (floor.index === floorNumber) {
         floor.status = "Waiting"
@@ -218,7 +234,7 @@ const Building = () => {
              name={floor.name} 
              numberOfElevators={numberOfElevators}
              status= {floor.status}
-             elevators= {hasElevators(floor.index)}
+             elevators= {elevators}
              floorNumber= {floor.index}
              callElevator={callElevator}
              time={floor.time}/>
