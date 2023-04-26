@@ -95,11 +95,11 @@ th, td {
     /* position: absolute; */
     /* bottom: 0;
     left: 0; */
-    transition: transform 2s ease-in-out;
+    /* transition: transform 10s ease-in-out; */
   }
   
   .icon-elevator.move-up {
-    transform: translateY(-83%);
+    /* transform: translateY(-93%); */
   }
 
   .home{
