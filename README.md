@@ -1,70 +1,31 @@
-# Getting Started with Create React App
+# Arbox Home Assignment - Elevators
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## How to run
+Clone the repository:
 
-## Available Scripts
+### `git clone https://github.com/NicoleDezoraive/Arbox-Assignment.git`
 
-In the project directory, you can run:
+Install node modules:
+
+### `cd ./Arbox-Assignment`
+### `npm install`
+
+Start the web app:
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Project Description:
 
-### `npm test`
+This project is built using React and aims to simulate a building with elevators. It offers users the option to select the number of floors and elevators they want to include in the building. Once they click the "Show Building" button, the building with the elevators will appear.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The project manages the state of each elevator using an array called "elevators," which represents each elevator and contains information about its index, current floor, status , etc..
 
-### `npm run build`
+When a user presses a "call" button, the system determines which elevator will arrive in first and in the shortest time from the moment of calling the elevator. The calculation of the shortest time is based on the distance between the floors and the waiting time for the elevator.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Once an elevator receives a call, it starts moving towards the selected floor. The elevators are initialized to be on the ground floor, but its position will be calculated according to the next floor it will arrive at to create the animation.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+As the elevator moves, it updates its current floor and the estimated time of arrival (ETA) in seconds. Once it arrives at its destination, it updates its state to "Arrived," and after two seconds, it changes back to "Available." This allows it to move to the next call or wait for a new one.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Overall, this project provides an excellent opportunity to demonstrate proficiency in React and showcase one's abilities in managing a complex state system for elevators.
