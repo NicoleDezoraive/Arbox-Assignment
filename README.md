@@ -6,6 +6,20 @@
 ## Demo video:
 https://user-images.githubusercontent.com/49281896/234729238-39199235-c712-4f6a-b714-e5dbd763b71a.mp4
 
+## Screen Shot:
+#### Home Page:
+![Home Page](https://github.com/NicoleDezoraive/Arbox-Assignment/blob/master/src/images/Screenshots/HomePage.JPG)
+#### Show Building Page:
+![ShowBuilding Page](https://github.com/NicoleDezoraive/Arbox-Assignment/blob/master/src/images/Screenshots/ShowBuilding.JPG)
+#### Calls:
+![Calls](https://github.com/NicoleDezoraive/Arbox-Assignment/blob/master/src/images/Screenshots/Calls.JPG)
+#### Displacement Elevators:
+![Displacement Elevators](https://github.com/NicoleDezoraive/Arbox-Assignment/blob/master/src/images/Screenshots/DisplacementElevators.JPG)
+#### Arrived Status:
+![Arrived Status](https://github.com/NicoleDezoraive/Arbox-Assignment/blob/master/src/images/Screenshots/ArrivedStatus.JPG)
+#### End Status:
+![End Status](https://github.com/NicoleDezoraive/Arbox-Assignment/blob/master/src/images/Screenshots/End.JPG)
+
 ## How to run
 Clone the repository:
 
