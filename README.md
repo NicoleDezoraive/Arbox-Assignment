@@ -1,4 +1,10 @@
-# Arbox Home Assignment - Elevators
+# Arbox Home Assignment - Elevators (React.js)
+
+## Created by:
+* Nicole Dezoraive, ניקול דזוראיב ,[Email](dezoraivenicole@gmail.com), [Git](https://github.com/NicoleDezoraive) ,[Linkedin](https://www.linkedin.com/in/nicole-dezoraive/)
+
+## Demo video:
+https://user-images.githubusercontent.com/49281896/234729238-39199235-c712-4f6a-b714-e5dbd763b71a.mp4
 
 ## How to run
 Clone the repository:
