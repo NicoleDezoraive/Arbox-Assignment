@@ -1,10 +1,25 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef  } from 'react';
 import {ReactComponent as IconElevator} from "../../images/icons8-elevator.svg"
 import ElevatorArrivedSound from '../../sounds/elevator_arrival_bell.mp3';
-// import { SwitchTransition, CSSTransition } from 'react-transition-group';
-// import { useSpring, animated } from 'react-spring';
+
 function Elevator({status, floorNumber, time, destination}) 
 {
+    const [animationDuration, setAnimationDuration] = useState(0);
+    const [currentPosition, setCurrentPosition] = useState(0);
+    const elevatorRef = useRef(null);
+
+    useEffect(() => {
+        // Calculate the animation duration based on the number of floors
+        const numFloors = Math.abs(destination - floorNumber);
+        const duration = (numFloors)*7 ; // 7 seconds per floor
+
+        setAnimationDuration(duration);
+        const containerHeight = elevatorRef.current.getBoundingClientRect().height;
+        const floorHeight = containerHeight / (numFloors-1); 
+        const currentPosition = floorHeight * (floorNumber)+1;
+        setCurrentPosition(currentPosition);
+      }, [floorNumber, destination]);
+
     let color = 'black';
     if (status === 'Available') {
         color = 'black';
@@ -14,53 +29,11 @@ function Elevator({status, floorNumber, time, destination})
         color = 'green';
     }
     
-    // const springProps = useSpring({
-    //     // If the destination floor is not the first floor, move the elevator up
-    //     top: destination !== 1 ? (destination - 1) * 100 : 0,
-    //     // If the destination floor is not the first floor, move the elevator down
-    //     bottom: destination !== 1 ? 'auto' : 0
-        
-    //   });
-    // const startTimeRef = useRef(null);
-    // const [position, setPosition] = useState(0);
-
-    // const style = ({
-         
-    //     x: "50" ,
-    //     y: 100 - {position},
-    //     width: "50" ,
-    //     height: "50",
-    //     fill: color
-            
-    //       });
-
-    
-
-    // const moveObject = (timestamp) => {
-    //     if (!startTimeRef.current) {
-    //     startTimeRef.current = timestamp;
-    //     }
-    //     const elapsedTime = timestamp - startTimeRef.current;
-    //     const newPosition = Math.min((elapsedTime / 1000) * 100, 100);
-    //     setPosition(newPosition);
-    //     if (elapsedTime < 1000 * 7) {
-    //         requestAnimationFrame(moveObject);
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     requestAnimationFrame(moveObject);
-    // }, []);
-
     return (
-        <div>
-            {/* <animated.svg style={springProps} className="icon-elevator"> */}
-                 <IconElevator className="icon-elevator" style={{fill: color}}/>
-            {/* </animated.svg> */}
-            
-
-            {/* TODO : RETUEN AUDIO */}
-            {/* {status === 'Arrived' && <audio src={ElevatorArrivedSound} autoPlay />} */} 
+        <div className="elevator-container" ref={elevatorRef}>
+            <IconElevator className="icon-elevator" style={{fill: color, animationDuration: `${animationDuration}s`,
+                                                        animationName: destination < floorNumber ? 'elevator-down' : 'elevator-up' }}/>
+            {status === 'Arrived' && <audio src={ElevatorArrivedSound} autoPlay />} 
         </div>
     
     )

@@ -22,14 +22,13 @@ const Building = () => {
   const numberOfElevators = parseInt(location.state.numElevators);
 
   const [calls, setCalls] = useState([]);
-  const timeForFloorSec= 5; // todo return to 7 sec 
+  const timeForFloorSec= 7;
   
   //floors
   const [floors, setFloors] = useState([...floorsNames.map((floorName, index) => ({
     status: "Call",
     name: floorName,
     index: index,
-    time: 0
   }))]);
 
   //elevators
@@ -52,10 +51,9 @@ const Building = () => {
     const copyElevators = [...elevators];
     const sortElevatorsByETA = copyElevators.sort((elevator1, elevator2) => (elevator1.eta) - (elevator2.eta));
     // Get the smallest K ETA times
-    let smallestKElevatorID = sortElevatorsByETA[k].id;
+    let smallestKElevatorID = sortElevatorsByETA[k%floorNumber].id;
     const selectedElevator = elevators.find(elevator => elevator.id === smallestKElevatorID);
-    const totalWaitingTimeElevator = selectedElevator.eta + Math.abs(selectedElevator.destination - floorNumber)*timeForFloorSec;
-    // console.log("totalWaitingTimeElevator", totalWaitingTimeElevator);
+    const totalWaitingTimeElevator = selectedElevator.eta + Math.abs(selectedElevator.destination - floorNumber)*timeForFloorSec
 
     setElevators(prevElevators => prevElevators.map(prevElevator => {
       if (prevElevator.id === smallestKElevatorID) {
@@ -110,73 +108,25 @@ const Building = () => {
     if (calls.length === 0) {
       return;
     }
-    const sortedElevator = getClosestElevator(calls, elevators);
-    if (sortedElevator === null) {
+    const closestElevator = getClosestElevator(calls, elevators);
+    if (closestElevator === null) {
       return;
     }
     let firstCall = calls[0];
-    setElevators((prevElevator) => prevElevator.map(elevator => { //todo: change to prev...s
-      // console.log("slice(1)",firstCall, "sortedElevator.id", sortedElevator.id);
-      // console.log("is can busy?", elevator.id , sortedElevator.id)
-      if (elevator.id === sortedElevator.id) {
-        elevator.status = "Busy";
-        setCalls(prevArray => prevArray.slice(1));
-        elevator.destination = firstCall;
-        elevator.eta = calculateTimeTakesReachFloor(elevator.floorNumber, elevator.destination, 1); // calculate the timeout value
-        elevator.time = elevator.eta
-        let newFloorNumber = elevator.floorNumber;
-        // console.log("newFloorNumber: ",newFloorNumber);
-        const startTime = new Date().getTime();
-        const timer = setInterval(() => {
-          if(newFloorNumber < firstCall){
-            newFloorNumber = newFloorNumber + 1
-          }
-          else if(newFloorNumber > firstCall){
-            newFloorNumber = newFloorNumber - 1
-          }
-          // console.log("newFloorNumber: ",newFloorNumber, "firstCall:", firstCall );
-          if (newFloorNumber === firstCall) {
-            clearInterval(timer);
-            const endTime = new Date().getTime();
-            const timeTookArrive = endTime - startTime;
-            
+    
+    setElevators((prevElevators) => prevElevators.map(elevator => {
+      if(firstCall === closestElevator.floorNumber){
+            setCalls(prevArray => prevArray.slice(1));
             setElevators(prevElevator => prevElevator.map(updatedElevator => { 
-              // console.log({elevators})
-              if (updatedElevator.id === sortedElevator.id) {
+              if (updatedElevator.id === closestElevator.id) {
                 return {
                   ...updatedElevator,
                   status: "Arrived",
-                  // eta: 0,
-                  floorNumber: firstCall,
-                  destination: updatedElevator.nextCall,
-                  nextCall: undefined,
-                  eta: updatedElevator.nextTotalWaitingTimeElevator,
-                  // nextTotalWaitingTimeElevator: 0,
-                  
-                  timeTookArrive: timeTookArrive/1000
+  
                 };
               }
               return updatedElevator;
             }));
-            // elevators.forEach(elevator => {
-            //   if (elevator.status === "Arrived") {
-            //     setTimeout(() => {
-            //       setElevators(prevElevator => prevElevator.map(prevElevator => {
-            //         if (prevElevator.id === elevator.id) {
-            //           return { ...prevElevator, nextCell:undefined, status: "Available" };
-            //         }
-            //         return prevElevator;
-            //       }));
-            //     }, 2000);
-            //   }
-            //   // setElevators(prevElevator => prevElevator.map(prevElevator => {
-            //   //   if (prevElevator.destination !== undefined && prevElevator.status!=="Arrived") {
-            //   //     return { ...prevElevator, status: "Busy" };
-            //   //   }
-            //   //   return prevElevator;
-            //   // }));
-              
-            // });
             setFloors(prevFloor => prevFloor.map(floor => {
               if (floor.index === firstCall) {
                 return {
@@ -186,31 +136,68 @@ const Building = () => {
               }
               return floor;
             }));
-            // console.log("elevator.floorNumber: ", elevator.floorNumber,"firstCall: ",firstCall )
-           
+      }
+      else if (elevator.id === closestElevator.id) {
+        elevator.status = "Busy";
+        setCalls(prevArray => prevArray.slice(1));
+        elevator.destination = firstCall;
+        elevator.eta = calculateTimeTakesReachFloor(elevator.floorNumber, elevator.destination, 1); 
+        elevator.time = elevator.eta
+        let newFloorNumber = elevator.floorNumber;
+        const startTime = new Date().getTime();
+        const timer = setInterval(() => {
+          if(newFloorNumber < firstCall){
+            newFloorNumber = newFloorNumber + 1
+          }
+          else if(newFloorNumber > firstCall){
+            newFloorNumber = newFloorNumber - 1
+          }
+         
+          if (newFloorNumber === firstCall) {
+            clearInterval(timer);
+            const endTime = new Date().getTime();
+            const timeTookArrive = endTime - startTime;
+            
+            setElevators(prevElevator => prevElevator.map(updatedElevator => { 
+              if (updatedElevator.id === closestElevator.id) {
+                return {
+                  ...updatedElevator,
+                  status: "Arrived",
+                  floorNumber: firstCall,
+                  destination: updatedElevator.nextCall,
+                  nextCall: undefined,
+                  eta: updatedElevator.nextTotalWaitingTimeElevator,       
+                  timeTookArrive: timeTookArrive/1000
+                };
+              }
+              return updatedElevator;
+            }));
+            setFloors(prevFloor => prevFloor.map(floor => {
+              if (floor.index === firstCall) {
+                return {
+                  ...floor,
+                  status: "Arrived",
+                };
+              }
+              return floor;
+            }));
           }
           
           setElevators(prevElevator => prevElevator.map(elevator => {
-            if (elevator.id === sortedElevator.id) {
+            if (elevator.id === closestElevator.id) {
               let newETA = calculateTimeTakesReachFloor(elevator.floorNumber,elevator.destination,1);
-              // return { ...elevator,floorNumber: newFloorNumber, status:elevator.status, eta: newETA, nextTotalWaitingTimeElevator: elevator.nextTotalWaitingTimeElevator - elevator.eta + newETA};
-              return { ...elevator,floorNumber: newFloorNumber, status:elevator.status, eta: newETA};
-
+               return { ...elevator,floorNumber: newFloorNumber, status:elevator.status, eta: newETA};
             }
             return elevator;
-            
           }));
           
-        }, timeForFloorSec*1000);
+        }, timeForFloorSec * 1000);
         return { ...elevator };
       }
       
       return elevator;
-      
     }))
-    
-
-    // go over all elevator, take all the availble elevators and coose the closest one
+  
   }, [calls, elevators])
 
   useEffect(()=>{
@@ -238,16 +225,8 @@ const Building = () => {
           }));
         }, 2000);
       }
-      // setElevators(prevElevator => prevElevator.map(prevElevator => {
-      //   if (prevElevator.destination !== undefined && prevElevator.status!=="Arrived") {
-      //     return { ...prevElevator, status: "Busy" };
-      //   }
-      //   return prevElevator;
-      // }));
-      
     });
   }, [elevators]);
-
 
   useEffect(() => {
     floors.forEach(floor => {
@@ -264,22 +243,13 @@ const Building = () => {
     });
   }, [floors]);
 
-  
-
-  // console.log({floors, elevators, calls})
-
-
   const callElevator = (floorNumber) => {
     setFloors((prevFloor) => prevFloor.map(floor => {
       if (floor.index === floorNumber) {
         floor.status = "Waiting"
-        floor.time = 300; // set time for elevator to reach the floor to 5 minutes (300 seconds)
-      } else {
-        floor.time = 0; // reset time for all other floors to 0
-      }
+      } 
       return floor;
     }))
-
     setCalls(prevCalls => {
       return [...prevCalls, floorNumber]})
   }
@@ -293,12 +263,11 @@ const Building = () => {
           {floors.slice().reverse().map((floor) => (
             <Floor key={floor.name}
              name={floor.name} 
-             numberOfElevators={numberOfElevators}
              status= {floor.status}
-             elevators= {elevators}
              floorNumber= {floor.index}
+             elevators= {elevators}
              callElevator={callElevator}
-             time={floor.time}/>
+            />
           ))}
         </tbody>
       </table>

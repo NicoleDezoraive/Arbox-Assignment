@@ -2,21 +2,8 @@ import React , { useEffect , useState } from 'react'
 import ButtonsCall from "../ButtonsCall"
 import Elevator from "../elevator/Elevator"
 
-function Floor({name, numberOfElevators, status, floorNumber, floorElevatorTime, elevators, callElevator, elevatorPositions}) 
+function Floor({name, status, floorNumber, elevators, callElevator})
 {
-    
-
-
-    // useEffect(() => {
-    //     const intervalId = setInterval(() => {
-    //       setTime(prevTime => prevTime - 1);
-    //     }, 1000);
-    
-    //     return () => clearInterval(intervalId);
-    //   }, []);
-
-
-
     return (
         <tr key={name}>
             
@@ -40,8 +27,7 @@ function Floor({name, numberOfElevators, status, floorNumber, floorElevatorTime,
                   </>
                 )}
 
-
-                  {elevator.nextCall === floorNumber && (
+                  {elevator.nextCall === floorNumber && elevator.nextTotalWaitingTimeElevator > 0 && (
               <>
                 {elevator.nextTotalWaitingTimeElevator < 60 ? (
                   `${elevator.nextTotalWaitingTimeElevator} sec.`
@@ -52,9 +38,7 @@ function Floor({name, numberOfElevators, status, floorNumber, floorElevatorTime,
                 )}
               </>
             )}
-            {/* {elevator.status === "Arrived" && console.log("here", "elevator", elevator, elevator.name) } */}
-           {/* { elevator.destination === 0 && elevator.status === "Arrived"  && console.log("elevator.destination === floorNumber", elevator.destination === floorNumber, "elevator.destination", elevator.destination,"floorNumber", floorNumber , elevator.status === "Arrived" )} */}
-            
+
               </td> 
             ))}
             <td className="cell-buttons-call">

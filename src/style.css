@@ -1,29 +1,77 @@
-
 body {
-    text-align: center;
-    margin: 20px;
-    width: 100%;
-    height: 100%;
-    background: #F0F0F0;
-    font-family: 'Heebo', sans-serif;
-    align-items: center;
-
+  text-align: center;
+  margin: 20px;
+  width: 100%;
+  height: 100%;
+  background: #F0F0F0;
+  font-family: 'Heebo', sans-serif;
+  align-items: center;
 }
 
 h1{
-    padding: 10px;
-    font-size: 25px;
+  padding: 10px;
+  font-size: 25px;
 }
 
 .container{
-    display:flex;
-    justify-content: space-evenly;
-    flex-direction:column-reverse;
-    align-items: center;
-    width: 100%;
+  display:flex;
+  justify-content: space-evenly;
+  flex-direction:column-reverse;
+  align-items: center;
+  width: 100%;
 }
 
-/*  */
+/*------------- Home --------------- */
+.home{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+}
+
+.inputs{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+}
+
+input {
+  padding: 10px;
+  border: none;
+  border-bottom: 1px solid gray;
+}
+
+.show-building{
+  padding: 10px;
+  margin-top: 20px;
+  border: none;
+  background-color: teal;
+  border-radius: 10px;
+  color: black;
+  cursor: pointer;
+  font-family: 'Heebo', sans-serif;
+}
+
+.inputs label {
+  margin-top: 20px;
+}
+
+.inputs input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+/*-------------- ButtonsCall -------------*/
 .button{
   background-color:#50C878;
   color: white;
@@ -42,111 +90,77 @@ h1{
 }
 
 .button.Waiting {
-    background-color: #ED2939;
-    border: 1px solid #ED2939;
+  background-color: #ED2939;
+  border: 1px solid #ED2939;
 }
 
 .button.Arrived {
-    color: #50C878;
-    background-color: #F0F0F0;
-    border: 1px solid #50C878;
+  color: #50C878;
+  background-color: #F0F0F0;
+  border: 1px solid #50C878;
 }
 
+/*------------- Building ----------*/
+.table {
+  border-collapse: collapse;
+  text-align: center;
+  margin: 0 auto;
+}
+
+/*-------------- Floor ------------*/
 th, td {
-    padding: 10px;
-    text-align: center;
-    width: 100px;
-    height: 35px;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  width: 100px;
+  height: 50px;
 }
   
 .cell {
-    background-color: white;
-    color: black;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    font-size: 12px;
-    font-family: 'Poppins', sans-serif;
+  background-color: white;
+  color: black;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  font-size: 12px;
+  font-family: 'Poppins', sans-serif;
 }
 
 .floor-numbers{
-    display:flex;
-    justify-content: space-evenly;
-    flex-direction:column-reverse;
-    text-align: right;
-    width: 140px;
-    padding-right: 20px;
-}
-
-.table {
-    border-collapse: collapse;
-    text-align: center;
-    margin: 0 auto;
+  display:flex;
+  justify-content: space-evenly;
+  flex-direction:column-reverse;
+  text-align: right;
+  width: 140px;
+  padding-right: 20px;
 }
 
 .cell-buttons-call{
-    width: 65px;
-    padding-left: 25px;
-    padding-right: 80px;
+  width: 65px;
+  padding-left: 25px;
+  padding-right: 80px;
 }
 
-
+/*------------- Elevator ------------*/
 .icon-elevator {
-    width: 25%;
-    height:80%;
-    /* position: absolute; */
-    /* bottom: 0;
-    left: 0; */
-    /* transition: transform 10s ease-in-out; */
-  }
-  
-  .icon-elevator.move-up {
-    /* transform: translateY(-93%); */
-  }
-
-  .home{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 50vh;
-  }
-
-  .inputs{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 30px;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-  }
-
-  input {
-    padding: 10px;
-    border: none;
-    border-bottom: 1px solid gray;
+  width: 25%;
+  height: 80%;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
-.show-building{
-    padding: 10px;
-    margin-top: 20px;
-    border: none;
-    background-color: teal;
-    border-radius: 10px;
-    color: black;
-    cursor: pointer;
-    font-family: 'Heebo', sans-serif;
+@keyframes elevator-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
 }
 
-.inputs label {
-    margin-top: 20px;
+@keyframes elevator-down {
+  from {
+    transform: translateY(0);
   }
-
-  .inputs input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    border: none;
-    border-bottom: 2px solid #ccc;
-    font-size: 16px;
-    font-family: inherit;
+  to {
+    transform: translateY(100%);
   }
+}
